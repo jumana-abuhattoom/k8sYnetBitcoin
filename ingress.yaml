@@ -1,0 +1,29 @@
+# ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: bingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /bitcoin-price
+            pathType: Prefix
+            backend:
+              service:
+                name: bitcoin-price-service
+                port:
+                  number: 5000
+    - http:
+        paths:
+          - path: /ynet-news
+            pathType: Prefix
+            backend:
+              service:
+                name: ynet-news-service
+                port:
+                  number: 8080

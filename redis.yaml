@@ -1,0 +1,64 @@
+# redis PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: redis-pv-claim
+
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+#redis deployment
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      volumes:
+        - name: pv-storage
+          persistentVolumeClaim:
+            claimName: redis-pv-claim
+      containers:
+        - name: redis
+          image: redis
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - mountPath: "/data"
+              name: pv-storage
+
+---
+# redis service
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  type: ClusterIP

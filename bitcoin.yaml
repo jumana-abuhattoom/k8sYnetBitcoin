@@ -1,0 +1,41 @@
+# bitcoin-price deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitcoin-price
+spec:
+  selector:
+    matchLabels:
+      app: bitcoin-price
+  template:
+    metadata:
+      labels:
+        app: bitcoin-price
+    spec:
+      containers:
+      - name: bitcoin-price
+        image: jumanaah/docker_final_task
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8000
+---
+# bitcoin-price service
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: bitcoin-price-service
+
+spec:
+  selector:
+    app: bitcoin-price
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+

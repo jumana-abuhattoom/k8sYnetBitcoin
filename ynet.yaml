@@ -1,0 +1,41 @@
+# Ynet News deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ynet-news
+spec:
+  selector:
+    matchLabels:
+      app: ynet-news
+  template:
+    metadata:
+      labels:
+        app: ynet-news
+    spec:
+      containers:
+      - name: ynet-news
+        image: jumanaah/ynet-news
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
+
+---
+# ynet-news service
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: ynet-news-service
+
+spec:
+  selector:
+    app: ynet-news
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
